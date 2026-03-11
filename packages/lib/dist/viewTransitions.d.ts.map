@@ -1,0 +1,1 @@
+{"version":3,"file":"viewTransitions.d.ts","sourceRoot":"","sources":["../src/viewTransitions.ts"],"names":[],"mappings":"AAGA,yBAAiB,eAAe,CAAC;IAU/B,SAAgB,GAAG,CAAC,CAAC,EACnB,QAAQ,EAAE,MAAM,CAAC,GAAG,OAAO,CAAC,CAAC,CAAC,EAC9B,OAAO,CAAC,EAAE;QAAE,MAAM,CAAC,EAAE,WAAW,CAAA;KAAE,GACjC,OAAO,CAAC,CAAC,CAAC,CA0BZ;IAED,SAAgB,IAAI,SAMnB;CAsCF"}

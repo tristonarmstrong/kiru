@@ -1,0 +1,145 @@
+import type { ReadonlySignal, Signal as SignalClass } from "./signals";
+import type { $CONTEXT, $ERROR_BOUNDARY, $FRAGMENT } from "./constants";
+import type { KiruGlobalContext } from "./globalContext";
+import type { GlobalAttributes, HtmlElementAttributes, SvgElementAttributes, SvgGlobalAttributes, StyleObject, HtmlElementBindableProps, HTMLTagToElement, SVGTagToElement } from "./types.dom";
+import type { AsyncTaskState, Prettify, Signalable, SomeDom } from "./types.utils";
+import type { AppHandle } from "./appHandle";
+export type { AsyncTaskState, ElementProps, Prettify, Signalable, StyleObject };
+type ElementProps<T extends keyof JSX.IntrinsicElements> = JSX.IntrinsicElements[T];
+type SignalableHtmlElementAttributes<Tag extends keyof HtmlElementAttributes> = {
+    [K in keyof HtmlElementAttributes[Tag]]: Signalable<HtmlElementAttributes[Tag][K] | undefined>;
+} & (Tag extends keyof HtmlElementBindableProps ? HtmlElementBindableProps[Tag] : {});
+type SignalableSvgElementAttributes<Tag extends keyof SvgElementAttributes> = {
+    [K in keyof SvgElementAttributes[Tag]]: Signalable<SvgElementAttributes[Tag][K] | undefined>;
+};
+type SignalableAriaProps = {
+    [K in keyof ARIAMixin]?: Signalable<ARIAMixin[K] | undefined>;
+};
+type SignalableGlobalAttributes = {
+    [K in keyof GlobalAttributes]: Signalable<GlobalAttributes[K] | undefined>;
+};
+type SignalableSvgGlobalAttributes = {
+    [K in keyof SvgGlobalAttributes]: Signalable<SvgGlobalAttributes[K] | undefined>;
+};
+type ElementMap = {
+    [Tag in keyof HtmlElementAttributes]: SignalableHtmlElementAttributes<Tag> & SignalableGlobalAttributes & SignalableAriaProps & Kiru.EventAttributes<HTMLTagToElement<Tag>> & JSX.ElementAttributes & {
+        ref?: Kiru.Ref<Element | null> | SignalClass<Element | null> | null;
+    };
+} & {
+    [Tag in keyof SvgElementAttributes]: SignalableSvgElementAttributes<Tag> & SignalableSvgGlobalAttributes & SignalableGlobalAttributes & SignalableAriaProps & Kiru.EventAttributes<SVGTagToElement<Tag>> & JSX.ElementAttributes & {
+        ref?: Kiru.Ref<Element | null> | SignalClass<Element | null> | null;
+    };
+} & {
+    [Tag in `${string}-${string}`]: Record<string, any>;
+};
+declare global {
+    interface Window {
+        __kiru: KiruGlobalContext;
+    }
+    namespace JSX {
+        interface IntrinsicElements extends ElementMap {
+        }
+        interface IntrinsicAttributes {
+            key?: ElementKey;
+        }
+        interface ElementAttributesProperty {
+            props: {};
+        }
+        interface ElementChildrenAttribute {
+            children: {};
+        }
+        type Children = JSX.Element | JSX.Element[];
+        type PrimitiveChild = string | number | bigint | boolean | undefined | null;
+        type ElementKey = string | number;
+        type Element = Element[] | Kiru.Element | PrimitiveChild | Kiru.Signal<PrimitiveChild> | Kiru.FC<any>;
+        interface ElementAttributes {
+            key?: JSX.ElementKey;
+            children?: JSX.Children;
+            innerHTML?: string | number | Kiru.Signal<string | number | null | undefined>;
+        }
+    }
+    namespace Kiru {
+        interface CustomEvents {
+        }
+        interface ContextProps<T> {
+            value: T;
+            children?: JSX.Children;
+        }
+        interface Context<T> extends Kiru.FC<ContextProps<T>> {
+            [$CONTEXT]: () => T;
+        }
+        interface FC<T = {}> {
+            (props: T): Exclude<JSX.Element, Kiru.FC<any>> | ((props: T) => JSX.Element);
+            /** Used to display the name of the component in devtools  */
+            displayName?: string;
+        }
+        type InferProps<T> = T extends Kiru.FC<infer P> ? P : never;
+        interface RefObject<T> {
+            current: T;
+        }
+        type RefCallback<T> = {
+            bivarianceHack(instance: T | null): void;
+        }["bivarianceHack"];
+        type Ref<T> = RefCallback<T> | RefObject<T>;
+        interface PromiseState<T> {
+            id: string;
+            state: "pending" | "fulfilled" | "rejected";
+            value?: T;
+            error?: Error;
+        }
+        interface StatefulPromiseBase<T> extends Promise<T>, PromiseState<T> {
+        }
+        type RenderMode = "dom" | "hydrate" | "string" | "stream";
+        type StateSetter<T> = T | ((prev: T) => T);
+        type Signal<T> = SignalClass<T> | ReadonlySignal<T>;
+        type ExoticSymbol = typeof $FRAGMENT | typeof $CONTEXT | typeof $ERROR_BOUNDARY;
+        interface Element {
+            type: (Function & {
+                displayName?: string;
+            }) | ExoticSymbol | "#text" | (string & {});
+            key: JSX.ElementKey | null;
+            props: {
+                [key: string]: any;
+                children?: unknown;
+                ref?: Kiru.Ref<unknown> | null;
+            };
+        }
+        type LifecycleHookCallback = () => (() => void) | void;
+        interface VNode extends Element {
+            app?: AppHandle;
+            dom?: SomeDom;
+            index: number;
+            depth: number;
+            flags: number;
+            parent: VNode | null;
+            child: VNode | null;
+            sibling: VNode | null;
+            prev: VNodeSnapshot | null;
+            deletions: VNode[] | null;
+            subs?: Set<Function>;
+            cleanups?: Record<string, Function>;
+            hooks?: {
+                pre: LifecycleHookCallback[];
+                preCleanups: (() => void)[];
+                post: LifecycleHookCallback[];
+                postCleanups: (() => void)[];
+            };
+            /** Run before each render with current props to sync prop-derived signals */
+            propSyncs?: ((props: VNode["props"]) => void)[];
+            render?: (props: VNode["props"]) => unknown;
+        }
+        interface VNodeSnapshot {
+            props: Kiru.VNode["props"];
+            key: Kiru.VNode["key"];
+            index: number;
+        }
+        type ContainerElement = HTMLElement | ShadowRoot;
+    }
+    interface Element {
+        __kiruNode?: Kiru.VNode;
+    }
+    interface ShadowRoot {
+        __kiruNode?: Kiru.VNode;
+    }
+}
+//# sourceMappingURL=types.d.ts.map

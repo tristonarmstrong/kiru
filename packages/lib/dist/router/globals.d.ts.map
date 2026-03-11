@@ -1,0 +1,1 @@
+{"version":3,"file":"globals.d.ts","sourceRoot":"","sources":["../../src/router/globals.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,SAAS,CAAA;AAC1C,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,wBAAwB,CAAA;AAElE,eAAO,MAAM,kBAAkB;aACZ,oBAAoB,GAAG,IAAI;CAC7C,CAAA;AAED,eAAO,MAAM,eAAe;aACT,MAAM,GAAG,IAAI;CAC/B,CAAA;AAED,eAAO,MAAM,WAAW;aACL,WAAW,GAAG,IAAI;CACpC,CAAA"}

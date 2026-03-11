@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../src/router/client/index.ts"],"names":[],"mappings":"AAWA,OAAO,KAAK,EAAE,sBAAsB,EAAc,MAAM,mBAAmB,CAAA;AAQ3E,UAAU,iBAAiB;IACzB,GAAG,EAAE,MAAM,CAAA;IACX,OAAO,EAAE,MAAM,CAAA;IACf,KAAK,EAAE,sBAAsB,CAAA;IAC7B,OAAO,EAAE,sBAAsB,CAAA;IAC/B,UAAU,EAAE,OAAO,CAAA;CACpB;AAED,wBAAsB,UAAU,CAAC,OAAO,EAAE,iBAAiB,iBAmB1D"}
