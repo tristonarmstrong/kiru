@@ -399,7 +399,32 @@ function renderFunctionComponent(
     return render(props)
   }
 
-  let newChild = latest(type)(props)
+  const comp = latest(type)
+  if (typeof comp !== "function") {
+    let compName = "Unknown"
+    if (comp && typeof comp === "object") {
+      if ("displayName" in comp && typeof (comp as any).displayName === "string") compName = (comp as any).displayName;
+      else if ("render" in comp && typeof (comp as any).render === "function" && (comp as any).render.name) compName = (comp as any).render.name;
+    }
+
+    let stack = ""
+    let current: Kiru.VNode | null = vNode.parent
+    while (current) {
+      let name = "Unknown"
+      if (typeof current.type === "string") {
+        name = current.type
+      } else if (typeof current.type === "function") {
+        name = current.type.displayName || current.type.name || "Anonymous"
+      } else if (typeof current.type === "symbol") {
+        name = current.type.description || "Symbol"
+      }
+      stack += `\n    in <${name}>`
+      current = current.parent
+    }
+
+    throw new KiruError(`[kiru] Expected a function component but got an object. This often happens when passing a React component (like one wrapped in forwardRef) to Kiru.\n\nComponent: ${compName}\nComponent Stack:${stack}`)
+  }
+  let newChild = comp(props)
   if (typeof newChild === "function") {
     vNode.subs?.forEach(call) // unsub from signals observed during setup
     vNode.render = newChild
