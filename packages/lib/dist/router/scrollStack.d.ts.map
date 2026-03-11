@@ -1,1 +1,0 @@
-{"version":3,"file":"scrollStack.d.ts","sourceRoot":"","sources":["../../src/router/scrollStack.ts"],"names":[],"mappings":"AAEA,eAAO,MAAM,WAAW;WACf,CAAC,MAAM,EAAE,MAAM,CAAC,EAAE;mBAOV,MAAM,GAAG,CAAC,MAAM,EAAE,MAAM,CAAC,GAAG,SAAS;mBAIrC,MAAM,KAAK,MAAM,KAAK,MAAM,GAAG,IAAI;sBAKhC,CAAC,MAAM,EAAE,MAAM,CAAC,EAAE,GAAG,IAAI;CAG5C,CAAA"}
