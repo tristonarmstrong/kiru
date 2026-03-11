@@ -383,6 +383,68 @@ function updateFunctionComponent(vNode: FunctionVNode): VNode | null {
   }
 }
 
+function getComponentNameFromObject(compObj: Record<string, unknown>): string | undefined {
+  const hasDisplayName = "displayName" in compObj && typeof compObj.displayName === "string";
+  if (hasDisplayName) {
+    return compObj.displayName as string;
+  }
+
+  const hasRenderFunction = "render" in compObj && typeof compObj.render === "function";
+  if (hasRenderFunction) {
+    const renderFn = compObj.render as { name?: string };
+    return renderFn.name;
+  }
+
+  return undefined;
+}
+
+function getVNodeName(vNode: Kiru.VNode): string {
+  const isHtmlTag = typeof vNode.type === "string";
+  if (isHtmlTag) {
+    return vNode.type as string;
+  }
+
+  const isFunctionComponent = typeof vNode.type === "function";
+  if (isFunctionComponent) {
+    const fnType = vNode.type as Function & { displayName?: string };
+    return fnType.displayName || fnType.name || "Anonymous";
+  }
+
+  const isExoticSymbol = typeof vNode.type === "symbol";
+  if (isExoticSymbol) {
+    const symbolType = vNode.type as symbol;
+    return symbolType.description || "Symbol";
+  }
+
+  return "Unknown";
+}
+
+function throwInvalidComponentError(comp: unknown, vNode: FunctionVNode): never {
+  let invalidComponentName = "Unknown";
+  const isComponentObject = comp && typeof comp === "object";
+  
+  if (isComponentObject) {
+    const compObj = comp as Record<string, unknown>;
+    const extractedName = getComponentNameFromObject(compObj);
+    if (extractedName) {
+      invalidComponentName = extractedName;
+    }
+  }
+
+  let formattedComponentStack = "";
+  let currentNodeReference: Kiru.VNode | null = vNode.parent;
+  
+  while (currentNodeReference) {
+    const currentNodeName = getVNodeName(currentNodeReference);
+    formattedComponentStack += `\n    in <${currentNodeName}>`;
+    currentNodeReference = currentNodeReference.parent;
+  }
+
+  const errorMessage = `[kiru] Expected a function component but got an object. This often happens when passing a React component (like one wrapped in forwardRef) to Kiru.\n\nComponent: ${invalidComponentName}\nComponent Stack:${formattedComponentStack}`;
+  
+  throw new KiruError(errorMessage);
+}
+
 function renderFunctionComponent(
   vNode: FunctionVNode,
   type: Function,
@@ -399,7 +461,11 @@ function renderFunctionComponent(
     return render(props)
   }
 
-  let newChild = latest(type)(props)
+  const comp = latest(type)
+  if (typeof comp !== "function") {
+    throwInvalidComponentError(comp, vNode)
+  }
+  let newChild = comp(props)
   if (typeof newChild === "function") {
     vNode.subs?.forEach(call) // unsub from signals observed during setup
     vNode.render = newChild
