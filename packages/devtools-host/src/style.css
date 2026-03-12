@@ -10,3 +10,11 @@
     cursor: pointer;
   }
 }
+
+/* Hide scrollbar track for inspect panel content */
+.hide-scrollbar-track::-webkit-scrollbar-track {
+  background: transparent;
+}
+.hide-scrollbar-track {
+  scrollbar-color: auto transparent;
+}

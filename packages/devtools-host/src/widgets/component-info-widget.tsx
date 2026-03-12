@@ -326,7 +326,7 @@ const ComponentInfoPanel: Kiru.FC<{
             }}
             className="rounded-lg bg-neutral-900 opacity-75 hover:opacity-100! shadow-lg"
           >
-            <div className="flex flex-col text-sm overflow-auto">
+            <div className="flex flex-col text-sm overflow-auto h-stretch">
               <div className="flex items-center justify-between gap-2 p-2">
                 <a
                   href={current.link}
@@ -367,7 +367,7 @@ const ComponentInfoPanel: Kiru.FC<{
                 </div>
               </div>
 
-              <div className="pt-2 px-4">
+              <div className="pt-2 px-4 hide-scrollbar-track overflow-y-scroll scrollbar-thin">
                 <div className="mb-1.5 font-medium text-neutral-300 text-xs">
                   Props
                 </div>
